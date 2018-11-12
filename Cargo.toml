@@ -1,0 +1,6 @@
+[package]
+name = "prand"
+version = "0.1.0"
+authors = ["Michael Bachmann <kontakt@babymotte.de>"]
+
+[dependencies]
