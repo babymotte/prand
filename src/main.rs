@@ -2,6 +2,7 @@ extern crate clap;
 
 use std::fs::File;
 use std::io::prelude::*;
+use std::io::stdout;
 use clap::*;
 
 fn main() {
@@ -50,7 +51,7 @@ fn main() {
     let source = get_source(secure);
 
     if secure && verbosity > 0 {
-        println!("Using secure source. If password generation takes very long, try moving your mouse around to provide the system with more entropy.");
+        println!("Using secure random. If password generation takes very long, try moving your mouse around to provide the system with more entropy.");
     }
 
     if verbosity > 0 {
@@ -58,7 +59,11 @@ fn main() {
     }
 
     for _ in 0..n {
-        println!("{}", generate(len, source));
+        generate(len, source, |ch| {
+            stdout().write(ch).expect("failed to write to stdout");
+            stdout().flush().expect("failed to flush stdout");
+        });
+        println!();
     }
 }
 
@@ -73,22 +78,19 @@ fn get_source(secure: bool) -> &'static str {
     }
 }
 
-fn generate(len: usize, source: &str) -> String {
+fn generate(len: usize, source: &str, consumer: impl Fn(&[u8])) {
 
     let mut len_counter = 0;
 
     let mut f = File::open(source).expect("rand file not found");
 
     let mut buf = [0; 1];
-    let mut passwd = String::new();
 
     while len_counter < len {
         f.read(&mut buf).expect(&format!("could not read from {:?}", f));
         if (buf[0] >= '0' as u8 && buf[0] <= '9' as u8) || (buf[0] >= 'A' as u8 && buf[0] <= 'Z' as u8) || (buf[0] >= 'a' as u8 && buf[0] <= 'z' as u8) {
-            passwd.push(buf[0] as char);
+            consumer(&buf);
             len_counter = len_counter + 1;
         }
     }
-
-    passwd
 }
