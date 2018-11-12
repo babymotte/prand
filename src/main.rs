@@ -1,9 +1,8 @@
 extern crate clap;
+extern crate rand;
 
-use std::fs::File;
-use std::io::prelude::*;
-use std::io::stdout;
 use clap::*;
+use rand::prelude::*;
 
 fn main() {
 
@@ -48,8 +47,6 @@ fn main() {
 
     let secure = matches.is_present("secure");
 
-    let source = get_source(secure);
-
     if secure && verbosity > 0 {
         println!("Using secure random. If password generation takes very long, try moving your mouse around to provide the system with more entropy.");
     }
@@ -59,38 +56,22 @@ fn main() {
     }
 
     for _ in 0..n {
-        generate(len, source, |ch| {
-            stdout().write(ch).expect("failed to write to stdout");
-            stdout().flush().expect("failed to flush stdout");
-        });
-        println!();
+        println!("{}", generate(len));
     }
 }
 
-fn get_source(secure: bool) -> &'static str {
+fn generate(len: usize) -> String {
 
-    // TODO make this platform independent
+    let mut passwd = String::new();
 
-    if secure {
-        "/dev/random"
-    } else {
-        "/dev/urandom"
-    }
-}
+    let mut rng = rand::thread_rng();
 
-fn generate(len: usize, source: &str, consumer: impl Fn(&[u8])) {
-
-    let mut len_counter = 0;
-
-    let mut f = File::open(source).expect("rand file not found");
-
-    let mut buf = [0; 1];
-
-    while len_counter < len {
-        f.read(&mut buf).expect(&format!("could not read from {:?}", f));
-        if (buf[0] >= '0' as u8 && buf[0] <= '9' as u8) || (buf[0] >= 'A' as u8 && buf[0] <= 'Z' as u8) || (buf[0] >= 'a' as u8 && buf[0] <= 'z' as u8) {
-            consumer(&buf);
-            len_counter = len_counter + 1;
+    while passwd.len() < len {
+        let ch: u8 = rng.gen();
+        if (ch >= '0' as u8 && ch <= '9' as u8) || (ch >= 'A' as u8 && ch <= 'Z' as u8) || (ch >= 'a' as u8 && ch <= 'z' as u8) {
+            passwd.push(ch as char);
         }
     }
+
+    passwd
 }

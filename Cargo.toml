@@ -5,3 +5,4 @@ authors = ["Michael Bachmann <kontakt@babymotte.de>"]
 
 [dependencies]
 clap = "2.32"
+rand = "0.5"
