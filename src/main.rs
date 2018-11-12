@@ -6,6 +6,9 @@ use clap::*;
 
 fn main() {
 
+    let default_lenght = 10;
+    let default_number = 1;
+
     let matches = App::new("prand")
         .version(env!("CARGO_PKG_VERSION"))
         .author(env!("CARGO_PKG_AUTHORS"))
@@ -14,7 +17,12 @@ fn main() {
             .short("l")
             .long("length")
             .value_name("LENGTH")
-            .help("Length of the generated password (default: 10)")
+            .help(&format!("Length of the generated password (default: {})", default_lenght))
+            .takes_value(true))
+        .arg(Arg::with_name("number")
+            .short("n")
+            .value_name("NUMBER OF PASSWORDS")
+            .help(&format!("Generate several passwords at once (default: {})", default_number))
             .takes_value(true))
         .arg(Arg::with_name("v")
             .short("v")
@@ -28,15 +36,18 @@ fn main() {
     };
 
     let len = matches.value_of("length").unwrap_or("10").parse().unwrap_or_else(|s| { println!("Not a valid length: {}; using 10 instead.", s); 10 });
-
-    println!("{}", generate(len, verbosity));
-}
-
-fn generate(len: usize, verbosity: u64) -> String {
+    let n = matches.value_of("number").unwrap_or("1").parse().unwrap_or_else(|s| { println!("Not a valid number: {}; using 1 instead.", s); 1 });
 
     if verbosity > 0 {
-        println!("Creating password of size {}.", len);
+        println!("Creating {} password(s) of size {}:\n", n, len);
     }
+
+    for _ in 0..n {
+        println!("{}", generate(len));
+    }
+}
+
+fn generate(len: usize) -> String {
 
     let mut len_counter = 0;
     
