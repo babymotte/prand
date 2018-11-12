@@ -24,6 +24,10 @@ fn main() {
             .value_name("NUMBER OF PASSWORDS")
             .help(&format!("Generate several passwords at once (default: {})", default_number))
             .takes_value(true))
+        .arg(Arg::with_name("secure")
+            .short("s")
+            .long("secure")
+            .help("Use a high entropy source, if available"))
         .arg(Arg::with_name("v")
             .short("v")
             .multiple(true)
@@ -35,26 +39,45 @@ fn main() {
         _ => 3
     };
 
-    let len = matches.value_of("length").unwrap_or("10").parse().unwrap_or_else(|s| { println!("Not a valid length: {}; using 10 instead.", s); 10 });
-    let n = matches.value_of("number").unwrap_or("1").parse().unwrap_or_else(|s| { println!("Not a valid number: {}; using 1 instead.", s); 1 });
+    let len = matches.value_of("length").unwrap_or("10");
+    let len = len.parse().unwrap_or_else(|_| { println!("Not a valid length: {}; using 10 instead.", len); 10 });
+
+    let n = matches.value_of("number").unwrap_or("1");
+    let n = n.parse().unwrap_or_else(|_| { println!("Not a valid number: {}; using 1 instead.", n); 1 });
+
+    let secure = matches.is_present("secure");
+
+    let source = get_source(secure);
+
+    if secure && verbosity > 0 {
+        println!("Using secure source. If password generation takes very long, try moving your mouse around to provide the system with more entropy.");
+    }
 
     if verbosity > 0 {
-        println!("Creating {} password(s) of size {}:\n", n, len);
+        println!("Creating {} password(s) of size {}:", n, len);
     }
 
     for _ in 0..n {
-        println!("{}", generate(len));
+        println!("{}", generate(len, source));
     }
 }
 
-fn generate(len: usize) -> String {
+fn get_source(secure: bool) -> &'static str {
+
+    // TODO make this platform independent
+
+    if secure {
+        "/dev/random"
+    } else {
+        "/dev/urandom"
+    }
+}
+
+fn generate(len: usize, source: &str) -> String {
 
     let mut len_counter = 0;
-    
-    // let rand = "/dev/random";
-    let rand = "/dev/urandom";
 
-    let mut f = File::open(rand).expect("rand file not found");
+    let mut f = File::open(source).expect("rand file not found");
 
     let mut buf = [0; 1];
     let mut passwd = String::new();
