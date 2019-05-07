@@ -1,0 +1,18 @@
+[package]
+name = "prand"
+version = "1.0.0"
+authors = ["Michael Bachmann <kontakt@babymotte.de>"]
+description = "A command line utility for generating random passwords."
+repository = "https://gitlab.com/bbmsoft.net/prand"
+readme = "README.md"
+keywords = ["password", "generator", "cli"]
+categories = ["command-line-utilities"]
+license = "MIT"
+
+[badges]
+gitlab = { repository = "bbmsoft.net/prand" }
+maintenance = { status = "passively-maintained" }
+
+[dependencies]
+clap = "2.33"
+rand = "0.5"
