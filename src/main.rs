@@ -28,7 +28,7 @@ fn main() {
                 .short("N")
                 .value_name("NUMBER OF PASSWORDS")
                 .help(&format!(
-                    "Number of passwords to be generated (defaul: {})",
+                    "Number of passwords to be generated (default: {})",
                     default_number
                 ))
                 .takes_value(true),
