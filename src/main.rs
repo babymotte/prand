@@ -134,20 +134,20 @@ fn main() {
 
     let mut pool = Vec::new();
 
-    for ch in b'!'..b'~' + 1 {
+    for ch in b'!'..=b'~' {
         pool.push(ch);
     }
 
     if !upper {
-        remove_all(&mut pool, b'A'..b'Z' + 1);
+        remove_all(&mut pool, b'A'..=b'Z');
     }
 
     if !lower {
-        remove_all(&mut pool, b'a'..b'z' + 1);
+        remove_all(&mut pool, b'a'..=b'z');
     }
 
     if !num {
-        remove_all(&mut pool, b'0'..b'9' + 1);
+        remove_all(&mut pool, b'0'..=b'9');
     }
 
     if !amb_symb {
@@ -170,7 +170,7 @@ fn main() {
     }
 }
 
-fn generate(len: usize, pool: &Vec<u8>) -> String {
+fn generate(len: usize, pool: &[u8]) -> String {
     let mut passwd = String::new();
 
     let mut rng = rand::thread_rng();
