@@ -1,6 +1,6 @@
 [package]
 name = "prand"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Michael Bachmann <kontakt@babymotte.de>"]
 description = "A command line utility for generating random passwords."
 repository = "https://gitlab.com/bbmsoft.net/prand"
