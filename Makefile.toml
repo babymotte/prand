@@ -1,0 +1,46 @@
+# requires cargo make
+#
+# run 'cargo install cargo-make' to install it
+# then run cargo make [task]
+
+[tasks.clean]
+command = "cargo"
+args = ["clean"]
+
+[tasks.format]
+install_crate = "rustfmt"
+command = "cargo"
+args = ["fmt"]
+
+[tasks.build]
+command = "cargo"
+args = ["build"]
+dependencies = ["format"]
+
+[tasks.release]
+command = "cargo"
+args = ["build", "--release"]
+dependencies = ["format"]
+
+[tasks.musl]
+install_crate = "cross"
+command = "cross"
+args = ["build", "--target", "x86_64-unknown-linux-musl", "--release"]
+dependencies = ["format"]
+
+[tasks.arm]
+install_crate = "cross"
+command = "cross"
+args = ["build", "--target", "arm-unknown-linux-gnueabihf", "--release"]
+dependencies = ["format"]
+
+[tasks.arm-musl]
+install_crate = "cross"
+command = "cross"
+args = ["build", "--target", "arm-unknown-linux-musleabihf", "--release"]
+dependencies = ["format"]
+
+[tasks.wasm]
+command = "cargo"
+args = ["build", "--target", "wasm32-wasi", "--release"]
+dependencies = ["format"]
