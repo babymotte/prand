@@ -5,7 +5,7 @@ use clap::{App, Arg};
 use rand::prelude::*;
 
 fn main() {
-    let default_lenght = 10;
+    let default_length = 32;
     let default_number = 1;
 
     let matches = App::new("prand")
@@ -19,7 +19,7 @@ fn main() {
                 .value_name("LENGTH")
                 .help(&format!(
                     "Length of the generated password (default: {})",
-                    default_lenght
+                    default_length
                 ))
                 .takes_value(true),
         )
@@ -79,7 +79,7 @@ fn main() {
 
     let mut alpha = matches.is_present("alphabetic");
     let mut num = matches.is_present("numeric");
-    let symb = matches.is_present("symbols");
+    let mut symb = matches.is_present("symbols");
     let amb_symb = matches.occurrences_of("symbols") > 1;
     let mut upper = matches.is_present("upper_case");
     let mut lower = matches.is_present("lower_case");
@@ -87,6 +87,7 @@ fn main() {
     if !alpha && !num && !symb {
         alpha = true;
         num = true;
+        symb = true;
     }
 
     if !upper && !lower {
@@ -110,23 +111,31 @@ fn main() {
         println!("Including ambiguous symbol characters")
     }
 
-    let len = matches.value_of("length").unwrap_or("10");
-    let len = len.parse().unwrap_or_else(|_| {
-        println!(
-            "Not a valid length: {}; using {} instead.",
-            len, default_lenght
-        );
-        default_lenght
-    });
+    let len = matches
+        .value_of("length")
+        .map(|val| {
+            val.parse().unwrap_or_else(|_| {
+                println!(
+                    "Not a valid length: {}; using {} instead.",
+                    val, default_length
+                );
+                default_length
+            })
+        })
+        .unwrap_or(default_length);
 
-    let n = matches.value_of("number").unwrap_or("1");
-    let n = n.parse().unwrap_or_else(|_| {
-        println!(
-            "Not a valid number: {}; using {} instead.",
-            n, default_number
-        );
-        default_number
-    });
+    let n = matches
+        .value_of("number")
+        .map(|val| {
+            val.parse().unwrap_or_else(|_| {
+                println!(
+                    "Not a valid number: {}; using {} instead.",
+                    val, default_number
+                );
+                default_number
+            })
+        })
+        .unwrap_or(default_number);
 
     if verbosity > 0 {
         println!("Creating {} password(s) of size {}:", n, len);
