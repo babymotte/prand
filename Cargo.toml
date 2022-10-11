@@ -3,14 +3,14 @@ name = "prand"
 version = "1.0.2"
 authors = ["Michael Bachmann <mbachmann@bbmsoft.net>"]
 description = "A command line utility for generating random passwords."
-repository = "https://gitlab.com/bbmsoft.net/prand"
+repository = "https://github.com/babymotte/prand"
 readme = "README.md"
 keywords = ["password", "generator", "cli"]
 categories = ["command-line-utilities"]
 license = "MIT"
 
 [badges]
-gitlab = { repository = "bbmsoft.net/prand" }
+github = { repository = "bbmsoft.net/prand" }
 maintenance = { status = "passively-maintained" }
 
 [dependencies]
